@@ -2,24 +2,72 @@ import java.math.*;
 
 public class Rsa
 {
-    private long p, q, d;
-    private long phi_de_n;
-    long n, e;
+     private long p, q, d, phi_de_n;
+     long n, e;
 
     public Rsa(long p, long q)
     {
+	 int premier;
 	 n = p * q;
 	 phi_de_n= (p-1) * (q-1);
 
 	 do
 	 {
-	      d = (long)(Math.random() * phi_de_n - 3) + 2;
-	      e = invmod(d, phi_de_n);
-	 }while (e==0);
+	      e = (long)(Math.random() * (phi_de_n-3)) + 3;
+	      premier = si_premier_entre_eux(phi_de_n, e);
+	 }while (premier == 0);
 
-	 if (e<0)
-	      e = e + phi_de_n;
+	 d = invmod(e, phi_de_n);
+
+	 if(d < 0)
+	      d = d + phi_de_n;
     }
+
+     public static int si_premier_entre_eux(long a, long b)
+     {
+	  long x = a, y = b, r ;
+
+	  if(x >= y)
+	  {
+	       r = x%y ;
+
+	       while(r!=0)
+	       {
+		    x=y ;
+		    y=r ;
+		    r=x%y ;
+	       }
+
+	       if(y == 1)
+		    return(1);
+	  }
+
+	  else if(x <= y)
+	  {
+	       r = y%x ;
+
+	       while(r!=0)
+	       {
+		    y=x ;
+		    x=r ;
+		    r=y%x ;
+	       }
+
+	       if(x == 1)
+		    return(1);
+	  }
+
+	 else if(x == 0 && y == 1 )
+	      return(1);
+	  
+	 else if(y == 0 && x == 1)
+	      return(1);
+	  
+	 else
+	      return(0);
+	  
+	 return(0);
+     }
 
     public static long invmod(long x, long n)
     {
@@ -62,11 +110,11 @@ public class Rsa
 
         Rsa rsa = new Rsa(p, q);
 
-        System.out.println("Module publique:            N = " + rsa.n);
+        System.out.println("Module publique:            n = " + rsa.n);
         System.out.println("Clef publique:              e = " + rsa.e);
-        System.out.println("Indicatrice d'Euler:   phi(N) = " + rsa.phi_de_n);
+        System.out.println("Indicatrice d'Euler:   phi(n) = " + rsa.phi_de_n);
         System.out.println("Clef privée:                d = " + rsa.d);
-        System.out.println("             e * d mod phi(N) = " + (rsa.e * rsa.d % rsa.phi_de_n));
+        System.out.println("             e * d mod phi(n) = " + (rsa.e * rsa.d % rsa.phi_de_n));
         System.out.println();
 
     }
